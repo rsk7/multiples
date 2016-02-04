@@ -1,2 +1,13 @@
 html, body { margin: 0; padding: 0; overflow: hidden }
 svg { position: fixed; top: 0; bottom: 0; height: 100%; width: 100% }
+
+#options {
+    position: absolute;
+    top: 10;
+    right: 10;
+}
+
+#options label {
+    display: inline-block;
+    width: 100px;
+}
