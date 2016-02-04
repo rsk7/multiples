@@ -6,7 +6,7 @@ let $ = require("jquery");
 
 let radius = 300;
 let multiple = 2;
-let limit = 200;
+let iterations = 200;
 let points = 100;
 
 
@@ -18,7 +18,7 @@ function dim() {
     };
 }
 
-function pointPositions(radius, numberOfPoints) {
+function pointPositions(numberOfPoints) {
     let results = [];
     let dimensions = dim();
     let x = dimensions.width / 2;
@@ -35,9 +35,9 @@ function pointPositions(radius, numberOfPoints) {
     return results;
 }
 
-function linePositions(pointData, multiple, limit) {
+function linePositions(pointData) {
     let lineData = [];
-    for(let i = 0; i < limit; i++) {
+    for(let i = 0; i < iterations; i++) {
         let start = i % pointData.length;
         let end = (multiple * i) % pointData.length;
         lineData.push({
@@ -53,34 +53,39 @@ function linePositions(pointData, multiple, limit) {
 function draw() {
     let data = [dim()];
     let svg = d3.select("svg");
-    let circle = svg.selectAll("circle").data(data);
-    let circleEnter = circle.enter().append("circle")
+    let circle = svg.selectAll("circle").data(data)
+        .attr("r", (d) => radius);
+    circle.enter().append("circle")
         .attr("cx", (d) => d.width / 2)
         .attr("cy", (d) => d.height / 2)
-        .attr("r", radius)
         .attr("stroke", "black")
+        .attr("r", (d) => radius)
         .attr("stroke-width", "2")
         .attr("fill", "none");
+    circle.exit().remove();
 
-    let pointData = pointPositions(radius, points);
-    let pointGroup = svg.append("g");
+    let pointData = pointPositions(points);
+    let pointGroup = svg.append("g").attr("class", "points");
     let point = pointGroup.selectAll("circle").data(pointData);
-    let groupEnter = point.enter().append("circle")
+    point.enter().append("circle")
         .attr("cx", (d) => d.x)
         .attr("cy", (d) => d.y)
         .attr("r", 2)
         .attr("fill", "black");
+    point.exit().remove();
 
-    let lineData = linePositions(pointData, multiple, limit);
-    let lineGroup = svg.append("g");
-    let line = lineGroup.selectAll("line").data(lineData);
-    let lineEnter = line.enter().append("line")
+    let lineData = linePositions(pointData);
+    svg.select("g.lines").remove();
+    let lineGroup = svg.append("g").attr("class", "lines");
+    let line = lineGroup.selectAll("line").data(lineData)
+    line.enter().append("line")
         .attr("x1", (d) => d.x1)
         .attr("x2", (d) => d.x2)
         .attr("y1", (d) => d.y1)
         .attr("y2", (d) => d.y2)
         .attr("stroke", "black")
         .attr("stroke-width", 1);
+    line.exit().remove();
 }
 
 $(function() {
