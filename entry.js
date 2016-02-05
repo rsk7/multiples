@@ -4,7 +4,7 @@ require("./styles/style.css");
 let d3 = require("d3");
 let $ = require("jquery");
 
-let radius = 300;
+let radius = 150;
 let multiple = 2;
 let iterations = 200;
 let points = 100;
@@ -54,6 +54,8 @@ function draw() {
     let data = [dim()];
     let svg = d3.select("svg");
     let circle = svg.selectAll("circle").data(data)
+        .attr("cx", (d) => d.width / 2)
+        .attr("cy", (d) => d.height / 2)
         .attr("r", (d) => radius);
     circle.enter().append("circle")
         .attr("cx", (d) => d.width / 2)
